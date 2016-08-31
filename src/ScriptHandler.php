@@ -173,10 +173,4 @@ class ScriptHandler
         $this->updateJson($data);
         $this->cleanupSkeleton();
     }
-
-    public static function postCreateProject(Event $event)
-    {
-        (new self($event->getIO()))->run();
-    }
 }
-
