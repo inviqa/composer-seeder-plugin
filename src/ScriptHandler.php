@@ -132,8 +132,6 @@ class ScriptHandler
             file_put_contents($match[1], $content);
         }
         rename('bin/project_bin', 'bin/' . $data['project_bin']);
-        unlink('README.md');
-        rename('README.project.md', 'README.md');
     }
 
     protected function updateJson(array $data)
