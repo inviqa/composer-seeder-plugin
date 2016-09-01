@@ -115,7 +115,6 @@ class ScriptHandler
         $default = $this->formatDefaultNamespace($data['package_name']);
         $data['project_namespace'] = $this->ask('Source namespace', $default);
         $data['project_bin'] = $this->ask('Project binary name', strtolower($data['project_name']));
-        $data['project_namespace_escaped'] = str_replace('\\', '\\\\', $data['project_namespace']);
 
         return $data;
     }
