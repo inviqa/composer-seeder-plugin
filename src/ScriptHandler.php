@@ -129,6 +129,8 @@ class ScriptHandler
             $content = $twig->render($file->getRelativePathname(), $data);
             preg_match('/(.*)\.seed\.twig$/', $file->getPathname(), $match);
 
+            // rename to preserve existing permissions
+            rename($file->getPathname(), $match[1]);
             file_put_contents($match[1], $content);
         }
         rename('bin/project_bin', 'bin/' . $data['project_bin']);
