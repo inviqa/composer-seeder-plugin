@@ -2,9 +2,10 @@
 namespace Inviqa\Seeder;
 
 use Composer\IO\IOInterface;
-use Composer\Util\ProcessExecutor;
 use Composer\Json\JsonFile;
+use Composer\Util\ProcessExecutor;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ExecutableFinder;
 use Twig_Loader_Filesystem;
@@ -103,6 +104,21 @@ class ScriptHandler
         return strtolower($name);
     }
 
+    protected function runComposerCommand(...$args)
+    {
+        $finder = new PhpExecutableFinder();
+        $phpPath = $finder->find();
+        if (!$phpPath) {
+            throw new \RuntimeException('Failed to locate PHP binary to execute '.implode(' ', $args));
+        }
+        $command = array_merge([$phpPath, realpath($_SERVER['argv'][0])], $args);
+        $exec = implode(' ', array_map('escapeshellarg', $command));
+        if (0 !== ($exitCode = $this->process->execute($exec))) {
+            $this->io->writeError(sprintf('<error>Script %s returned with error code '.$exitCode.'</error>', $exec));
+            throw new ScriptExecutionException('Error Output: '.$this->process->getErrorOutput(), $exitCode);
+        }
+    }
+
     protected function askQuestions()
     {
         $data = [];
@@ -162,6 +178,8 @@ class ScriptHandler
     protected function cleanupSkeleton()
     {
         unlink('CHANGELOG.md');
+        $this->runComposerCommand('update');
+
     }
 
     public function run()
