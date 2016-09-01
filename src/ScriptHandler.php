@@ -7,6 +7,8 @@ use Composer\Json\JsonFile;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ExecutableFinder;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 
 class ScriptHandler
@@ -49,7 +51,11 @@ class ScriptHandler
     private function filterDirectories($directory)
     {
         $finder = new Finder();
-        $finder->files()->in($directory);
+        $finder
+            ->ignoreDotFiles(false)
+            ->files()
+            ->name('/\.seed\.twig$/')
+            ->in($directory);
         return $finder;
     }
 
@@ -116,20 +122,14 @@ class ScriptHandler
 
     protected function convertTemplates(array $data)
     {
-        $replacePatterns = [];
-        foreach ($data as $key => $value) {
-            $replacePatterns['{{'.$key.'}}'] = $value;
-        }
+        $loader = new Twig_Loader_Filesystem(getcwd());
+        $twig = new Twig_Environment($loader);
 
         foreach ($this->filterDirectories(getcwd()) as $file) {
-            $filename = $file->getPathName();
-            $content = file_get_contents($filename);
-            $content = str_replace(array_keys($replacePatterns), array_values($replacePatterns), $content);
-            if ($file->getFilename() == '.gitignore') {
-                $content = str_replace('project_bin', $data['project_bin'], $content);
-            }
+            $content = $twig->render($file->getRelativePathname(), $data);
+            preg_match('/(.*)\.seed\.twig$/', $file->getPathname(), $match);
 
-            file_put_contents($filename, $content);
+            file_put_contents($match[1], $content);
         }
         rename('bin/project_bin', 'bin/' . $data['project_bin']);
         unlink('README.md');
