@@ -1,5 +1,5 @@
 {
-    "name": "inviqa/composer-seeder",
+    "name": "inviqa/composer-seeder-plugin",
     "description": "A post-create-project-cmd plugin to make source projects templatable",
     "type": "composer-plugin",
     "require": {
