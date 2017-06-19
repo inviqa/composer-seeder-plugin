@@ -170,7 +170,6 @@ class ScriptHandler
         } else {
             unset($config['license']);
         }
-        $config['autoload']['psr-4'][$data['project_namespace'] . "\\"] = 'src/';
 
         $file->write($config);
     }
