@@ -157,6 +157,7 @@ class ScriptHandler
         $file = new JsonFile('composer.json');
         $config = $file->read();
 
+        unset($config['require']['inviqa/composer-seeder-plugin']);
         unset($config['require-dev']['inviqa/composer-seeder-plugin']);
         unset($config['authors']);
 
