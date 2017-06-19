@@ -128,6 +128,7 @@ class ScriptHandler
         $data['package_description'] = $this->ask('Description');
         $data['package_license'] = $this->ask('License (e.g. MIT,proprietary)');
 
+        // Deprecated: custom questions to be removed and placed in the seed instead later
         $default = $this->formatDefaultNamespace($data['package_name']);
         $data['project_namespace'] = $this->ask('Source namespace', $default);
         $data['project_bin'] = $this->ask('Project binary name', strtolower($data['project_name']));
@@ -176,9 +177,8 @@ class ScriptHandler
 
     protected function cleanupSkeleton()
     {
+        // Deprecated: a custom action to be removed and placed in the seed instead later
         unlink('CHANGELOG.md');
-        $this->runComposerCommand('update');
-
     }
 
     public function run()
@@ -188,5 +188,6 @@ class ScriptHandler
         $this->convertTemplates($data);
         $this->updateJson($data);
         $this->cleanupSkeleton();
+        $this->runComposerCommand('update');
     }
 }
